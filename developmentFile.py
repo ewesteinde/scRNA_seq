@@ -5,7 +5,10 @@ Created on Mon Jan  8 10:18:06 2024
 
 @author: elenawesteinde
 
-Working with thirst dataset & following code @ https://github.com/sims-lab/FlyThirst/blob/main/
+This file is used as a testing ground for code development & playing around with different datasets as this repo is still in
+development. 
+
+Currently working with the Parker et al thirst dataset & following code @ https://github.com/sims-lab/FlyThirst/blob/main/
 """
 
 #%% load modules
@@ -185,6 +188,11 @@ sc.pl.umap(adata_gaba, color = genesOfInterest, frameon = False, layer = 'scvi_n
 # mFB = 
 # vdRB = 
 
+
+def testFunction():
+    a = 1
+    b = 2
+    return a, b
     
     
     

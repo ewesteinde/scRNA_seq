@@ -3,25 +3,41 @@
 Created on Thu Jan 25 12:02:14 2024
 
 @author: ewest
+
+Run this file to perform basic analyses of a preprocessed and clustered 10xgenomics scRNA seq dataset looking at 
+different average marker expression across clusters and performs subclustering of the GABAergic expressing clusters.
+Copy & edit to look at different markers. 
+
+clustering performed by scVI model: https://www.nature.com/articles/s41592-018-0229-2 
 """
+
+#%% load modules
 
 import os
 import platform 
-# replace paths to code directory if needed
-if platform.system() == 'Windows':
-    os.chdir('Z:\Dropbox (HMS)\Wilson_Lab_Data\Code\OmicsCode')
-else:
-    os.chdir('/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Code/OmicsCode')
-
-import preprocessFunctions as ppf 
-import analysisFunctions as af
+import analysisFunctions as af 
+import clusterFunctions as cf
 import scanpy as sc 
 from scipy.sparse import csr_matrix
+
+#%% set code, data directories & figure settings
+
+# replace paths to code directory if needed
+if platform.system() == 'Windows':
+    os.chdir('C:\Code\scRNA_seq')
+    saveDir = 'Z:\Dropbox (HMS)\Wilson_Lab_Data\Omics_datasets\processedData'
+    datasetDir = 'Z:\Dropbox (HMS)\Wilson_Lab_Data\Omics_datasets\datasets\GSE207799_RAW'
+else:
+    os.chdir('/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Code/OmicsCode')
+    saveDir = 'Z:/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/processedData'
+    datasetDir = 'Z:/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets\datasets/GSE207799_RAW'
+    
+sc.set_figure_params(dpi=100, dpi_save=100)
 
 #%% Load in preprocessed dataset
 
 # change path if needed
-adata = sc.read_h5ad('/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Code/OmicsCode/all_normBeforeCocat_4000.h5ad')
+adata = sc.read_h5ad(os.path.join(saveDir, 'allconds_allgenes_postCluster_normBeforeCocat'))
 
 #%% Label broad/known cell types
 
@@ -37,7 +53,7 @@ adata = sc.read_h5ad('/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Code/O
 
 # plot with cluster number showing
 resolution = 1
-adata, cluster_dic = ppf.defineClusters(adata, resolution)
+adata, cluster_dic = cf.defineClusters(adata, resolution)
 
 sc.pl.umap(adata, color = ['leiden'], frameon = False, legend_loc = 'on data', legend_fontsize = 'x-small')
 
@@ -80,13 +96,13 @@ adata_gaba = adata[adata.obs['leiden'].isin(aboveThres)]
 adata_gaba.X = csr_matrix(adata_gaba.X)
 # set number of genes (ranked by variability) to keep & define clusters by
 num_genes = 'all'
-adata_gaba, model_gaba, cluster_dic_gaba, markers_scvi_gaba = ppf.clusterData(adata_gaba, num_genes)
+adata_gaba, model_gaba, cluster_dic_gaba, markers_scvi_gaba = cf.clusterData(adata_gaba, num_genes)
 
 # Make & visualize clusters - GABA
 resolution = 2
-adata_gaba, cluster_dic = ppf.defineClusters(adata_gaba, resolution)
+adata_gaba, cluster_dic = cf.defineClusters(adata_gaba, resolution)
 
 #%% Save new dataset & model
-adata_gaba.write_h5ad('allconds_allgenes_normBeforeCocat_gaba.h5ad')
-model_gaba.save('model_allconds_allgenes_normBeforeCocat_gaba.model')
+adata_gaba.write_h5ad(os.path.join(saveDir, 'allconds_allgenes_normBeforeCocat_gaba.h5ad'))
+model_gaba.save(os.path.join(saveDir, 'model_allconds_allgenes_normBeforeCocat_gaba.model'))
 

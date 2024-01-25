@@ -3,28 +3,44 @@
 Created on Thu Jan 25 11:56:21 2024
 
 @author: ewest
+
+Run this file to preprocess a 10xgenomics scRNA seq dataset with one or more batches/conditions.
+Performs doublet prediction & removal, removal of cells with high mitochondrial & ribosomal RNA expression, 
+and normalization of data.
+Following preprocessing will perfrom clustering on the data and save the result. 
+Doublet prediction and clustering performed by scVI model: https://www.nature.com/articles/s41592-018-0229-2 
+
 """
+#%% load modules
 
 import os
 import platform 
-# replace paths to code directory if needed
-if platform.system() == 'Windows':
-    os.chdir('Z:\Dropbox (HMS)\Wilson_Lab_Data\Code\OmicsCode')
-else:
-    os.chdir('/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Code/OmicsCode')
-
 import preprocessFunctions as ppf 
+import clusterFunctions as cf
 import scanpy as sc 
 from scipy.sparse import csr_matrix
+
+#%% set code, data directories & figure settings
+
+# replace paths to code directory if needed
+if platform.system() == 'Windows':
+    os.chdir('C:\Code\scRNA_seq')
+    saveDir = 'Z:\Dropbox (HMS)\Wilson_Lab_Data\Omics_datasets\processedData'
+    datasetDir = 'Z:\Dropbox (HMS)\Wilson_Lab_Data\Omics_datasets\datasets\GSE207799_RAW'
+else:
+    os.chdir('/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Code/OmicsCode')
+    saveDir = 'Z:/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/processedData'
+    datasetDir = 'Z:/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets\datasets/GSE207799_RAW'
+    
 sc.set_figure_params(dpi=100, dpi_save=100)
 
 #%% gather data
-dataFiles, conds = ppf.gatherFiles(rootDir = 'Z:\Dropbox (HMS)\Wilson_Lab_Data\Omics_datasets\GSE207799_RAW')
+dataFiles, conds = ppf.gatherFiles(datasetDir)
 uniqueConds = set(conds)
 print(uniqueConds)
 #%% preprocess data
 
-# preprocesses each individual dataset seperately and returns a list with all of them
+# preprocesses each individual dataset (predicts doublets, cleans & normalizes data) seperately and returns a list with all of them
 allData = [] 
 for file in dataFiles:
     allData.append(ppf.preprocess(file))
@@ -47,15 +63,16 @@ adata.obs_names_make_unique()
 # convert X to sparse matrix to reduce file size, can also do before cocatination,
 adata.X = csr_matrix(adata.X)
 # save complete dataset prior to further processing
-adata.write_h5ad('allconds_all_genes_postPreProcess_normbeforeCocat.h5ad')
+adata.write_h5ad(os.path.join(saveDir, 'allconds_all_genes_postPreProcess_normbeforeCocat.h5ad'))
 
 #%% Setup & train model for clustering & further analysis 
 # for scvi want number of cells to be at least half the number of genes you have, otherwise might need a diff model
 # or only x number most variable genes
 adata = sc.read_h5ad('Z:/Dropbox (HMS)/Wilson_Lab_Data/Code/OmicsCode/all_postPreProcess_normbeforeCocat.h5ad')
+# set number of genes (ranked by variability) to keep & define clusters by
 num_genes = 'all'
-adata, model, cluster_dic, markers_scvi = ppf.clusterData(adata, num_genes)
+adata, model, _, _ = cf.clusterData(adata, num_genes)
 
 # save model & data
-adata.write_h5ad('allconds_allgenes_postCluster_normBeforeCocat.h5ad')
-model.save('model_allconds_allgenes_postCluster_normBeforeCocat.model')
+adata.write_h5ad(os.path.join(saveDir, 'allconds_allgenes_postCluster_normBeforeCocat.h5ad'))
+model.save(os.path.join(saveDir, 'model_allconds_allgenes_postCluster_normBeforeCocat.model'))
