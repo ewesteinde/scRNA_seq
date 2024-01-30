@@ -18,16 +18,16 @@ High mitochondrial RNA or ribosomal RNA counts are signs of an unhealthy cell an
 
 Doublet prediction and clustering performed by scVI model: https://www.nature.com/articles/s41592-018-0229-2 
 
-![pre cleaning]()
-![post cleaning]()
+![pre cleaning](https://github.com/ewesteinde/scRNA_seq/blob/main/exampleFigures/preCleaning.png)
+![post cleaning](https://github.com/ewesteinde/scRNA_seq/blob/main/exampleFigures/postCleaning.png)
 
 ### Clustering
 
 following these cleaning steps, each cell is normalized by total counts over all genes, such that every cell as the same total gene count after normalization and individual datasets are concatinated. Now clustering can occur to group cells more similar to eachother together. 
-(Cluster pic)
+![cluster example]([Cluster pic](https://github.com/ewesteinde/scRNA_seq/blob/main/exampleFigures/allData_clusters.png))
 
 Following concatinated (or alternatively, merging which only keeps genes found across every dataset) and clustering one should check for high overlap across the datasets (samples). If each dataset forms highly seperated clusters this indicates significant batch effects are affecting the data. 
-(Sample pic)
+![Sample merge example](https://github.com/ewesteinde/scRNA_seq/blob/main/exampleFigures/allData_samples.png)
 
 clustering performed by scVI model: https://www.nature.com/articles/s41592-018-0229-2 
 
@@ -36,10 +36,10 @@ clustering performed by scVI model: https://www.nature.com/articles/s41592-018-0
 We can then check for expression of markers of interest (and that they look to match expression patterns seen in the original Park *et al* analysis)
 
 ##### cholinergic: VAChT, glutamatergic: VGlut, gabaergic: Gad1
-![VAChT, VGlut, Gad1]()
+![VAChT, VGlut, Gad1](https://github.com/ewesteinde/scRNA_seq/blob/main/exampleFigures/ACh_Glut_GABA.png)
 ##### kenyon: ey, Dop1R2, Pka-C1
-![ey, Dop1R2, Pka-C1]()
+![ey, Dop1R2, Pka-C1](https://github.com/ewesteinde/scRNA_seq/blob/main/exampleFigures/KenyonCells.png)
 ##### glia: CG10433,  IPCs: Ilp2, Ilp3
-![CG10433, Ilp2, Ilp3]()
+![CG10433, Ilp2, Ilp3](https://github.com/ewesteinde/scRNA_seq/blob/main/exampleFigures/glia_IPCs.png)
 
 This pipeline is currently being compared, validated against, and expanded to other available datasets and analyses. 
