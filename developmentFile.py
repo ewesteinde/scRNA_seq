@@ -134,7 +134,7 @@ gene_ids, clusters, obs, average_obs, obs_bool, fraction_obs = af.findAveGeneExp
 results_table = af.makeResultsTable(adata)
 geneScore_cluster = af.geneScoresPerCluster(results_table, gene_ids, clusters)
 
-genesOfInterest = ['Gad1','VAChT', 'Rx']
+genesOfInterest = ['pnt','Imp', 'Rx']
 af.plotGeneScoresAcrossClusters(genesOfInterest,geneScore_cluster)
 #%%
 

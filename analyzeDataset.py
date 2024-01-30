@@ -11,16 +11,9 @@ Copy & edit to look at different markers.
 clustering performed by scVI model: https://www.nature.com/articles/s41592-018-0229-2 
 """
 
-#%% load modules
-
+#%% set code, data directories & figure settings
 import os
 import platform 
-import analysisFunctions as af 
-import clusterFunctions as cf
-import scanpy as sc 
-from scipy.sparse import csr_matrix
-
-#%% set code, data directories & figure settings
 
 # replace paths to code directory if needed
 if platform.system() == 'Windows':
@@ -28,16 +21,23 @@ if platform.system() == 'Windows':
     saveDir = 'Z:\Dropbox (HMS)\Wilson_Lab_Data\Omics_datasets\processedData'
     datasetDir = 'Z:\Dropbox (HMS)\Wilson_Lab_Data\Omics_datasets\datasets\GSE207799_RAW'
 else:
-    os.chdir('/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Code/OmicsCode')
-    saveDir = 'Z:/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/processedData'
-    datasetDir = 'Z:/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets\datasets/GSE207799_RAW'
+    os.chdir('/Users/elenawesteinde/Documents/Omics_proj/scRNA_seq')
+    saveDir = '/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/processedData'
+    datasetDir = '/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/datasets/GSE207799_RAW'
+    
+#%% load modules
+
+import analysisFunctions as af 
+import clusterFunctions as cf
+import scanpy as sc 
+from scipy.sparse import csr_matrix
     
 sc.set_figure_params(dpi=100, dpi_save=100)
 
 #%% Load in preprocessed dataset
 
 # change path if needed
-adata = sc.read_h5ad(os.path.join(saveDir, 'allconds_allgenes_postCluster_normBeforeCocat'))
+adata = sc.read_h5ad(os.path.join(saveDir, 'allconds_allgenes_postCluster_normBeforeCocat.h5ad'))
 
 #%% Label broad/known cell types
 

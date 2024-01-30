@@ -88,6 +88,6 @@ def clusterData(adata, num_genes):
     adata, cluster_dic = defineClusters(adata, 1) 
     adata, markers_dict = identifyClusterMarkers(adata, model, 0)
     
-    
-    
+    sc.pl.umap(adata, color = ['leiden', 'Sample'], frameon = False)
+        
     return adata, model, cluster_dic, markers_dict

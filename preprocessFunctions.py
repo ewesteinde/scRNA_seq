@@ -60,7 +60,7 @@ def doubletRemoval(rawdata,file):
     doublets = df[(df.prediction == 'doublet') & (df.dif > 1)]
     # load in raw file again
     adata = sc.read_10x_h5(file)
-    # remove doublets
+    # remove cells that are likely doublets
     adata.obs['doublet'] = adata.obs.index.isin(doublets.index)
     adata = adata[~adata.obs.doublet]
     
