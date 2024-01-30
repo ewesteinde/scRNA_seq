@@ -26,7 +26,7 @@ Doublet prediction and clustering performed by scVI model: https://www.nature.co
 ### Clustering
 
 following these cleaning steps, each cell is normalized by total counts over all genes, such that every cell as the same total gene count after normalization and individual datasets are concatinated. Now clustering can occur to group cells more similar to eachother together. 
-![cluster example]([Cluster pic](https://github.com/ewesteinde/scRNA_seq/blob/main/exampleFigures/allData_clusters.png)
+![cluster example](https://github.com/ewesteinde/scRNA_seq/blob/main/exampleFigures/allData_clusters.png)
 
 Following concatinated (or alternatively, merging which only keeps genes found across every dataset) and clustering one should check for high overlap across the datasets (samples). If each dataset forms highly seperated clusters this indicates significant batch effects are affecting the data. 
 ![Sample merge example](https://github.com/ewesteinde/scRNA_seq/blob/main/exampleFigures/allData_samples.png)
