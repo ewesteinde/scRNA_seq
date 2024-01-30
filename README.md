@@ -18,7 +18,9 @@ High mitochondrial RNA or ribosomal RNA counts are signs of an unhealthy cell an
 
 Doublet prediction and clustering performed by scVI model: https://www.nature.com/articles/s41592-018-0229-2 
 
+##### Basic QC metric pre cleaning:
 ![pre cleaning](https://github.com/ewesteinde/scRNA_seq/blob/main/exampleFigures/preCleaning.png)
+##### Basic QC metric post cleaning:
 ![post cleaning](https://github.com/ewesteinde/scRNA_seq/blob/main/exampleFigures/postCleaning.png)
 
 ### Clustering
