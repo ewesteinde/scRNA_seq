@@ -19,7 +19,7 @@ def defineClusters(adata, res):
 
     cluster_nums = list(range(len(adata.obs['leiden'].unique())))
     cluster_names = [str(x) for x in cluster_nums]
-    cluster_dic = dict(zip(cluster_nums, cluster_names))
+    cluster_dic = dict(zip(cluster_names, cluster_names))
     adata.uns['cluster_dic'] = cluster_dic
       
     # plot with cluster number showing

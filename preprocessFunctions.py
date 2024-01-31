@@ -11,7 +11,7 @@ def gatherFiles(rootDir):
     from os.path import isfile, join
     
     # Unzip files if necessary
-    onlyfiles = [f for f in listdir(rootDir) if isfile(join(rootDir,f)) and "csv.gz" in f]
+    onlyfiles = [f for f in listdir(rootDir) if isfile(join(rootDir,f)) and ".gz" in f]
     
     # if zipped files exist unzip them 
     if onlyfiles:
@@ -23,11 +23,11 @@ def gatherFiles(rootDir):
     allData = []
     cond = []        
     for f in listdir(rootDir):
-        if isfile(join(rootDir,f)) and ".h5" in f:
+        if isfile(join(rootDir,f)) and (".h5" in f or ".tsv" in f):
             allData.append(join(rootDir,f))
         elif not isfile(join(rootDir,f)) and ".DS_Store" not in f:
             for file in listdir(join(rootDir,f)):
-                if isfile(join(rootDir,f,file)) and ".h5" in file:
+                if isfile(join(rootDir,f,file)) and (".h5" in file or ".tsv" in file):
                     allData.append(join(rootDir,f,file))
                     cond.append(f)
             
