@@ -55,7 +55,7 @@ def identifyClusterMarkers(adata, model, find_markers):
     return adata, marker_dict
     
 
-def clusterData(adata, num_genes):
+def clusterData(adata, num_genes, minCounts):
     # Setup & train model 
     # for scvi want number of cells to be at least half the number of genes you have, otherwise might need a diff model
     # or only x number most variable genes    
@@ -66,7 +66,7 @@ def clusterData(adata, num_genes):
     elif num_genes > adata.shape[1]:
         num_genes = adata.shape[1]
     # filter out genes that occur less than 3 times, causes error if too many counts are near 0
-    sc.pp.filter_genes(adata, min_counts = 8)
+    sc.pp.filter_genes(adata, min_counts = minCounts)
     sc.pp.highly_variable_genes(adata, n_top_genes = num_genes, subset= True, layer = 'counts', flavor = 'seurat_v3', 
                                 batch_key = 'Sample') # no batch key if one sample                           
     sc.pl.highly_variable_genes(adata)
