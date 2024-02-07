@@ -19,14 +19,27 @@ Created on Wed Jan 31 16:23:37 2024
 import pandas as pd
 import scanpy as sc
 
-saveDir = '/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/processedData'
-file = '/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/datasets/AgingBrain/R23E10_gal4/GSE107451_R23E10_SMART-seq2_DGEM.tsv'
+import os
+import platform 
+
+# replace paths to code directory if needed
+if platform.system() == 'Windows':
+    os.chdir('Z:\Dropbox (HMS)\Wilson_Lab_Data\Omics_datasets\processedData')
+    saveDir = 'Z:\Dropbox (HMS)\Wilson_Lab_Data\Omics_datasets\processedData'
+    file = 'Z:/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/datasets/AgingBrain/R23E10_gal4/GSE107451_R23E10_SMART-seq2_DGEM.tsv'
+    adata = sc.read_h5ad('Z:/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/processedData/allconds_allgenes_clusterRes_1.5.h5ad')
+    os.chdir('C:\Code\scRNA_seq')
+else:
+    os.chdir('/Users/elenawesteinde/Documents/Omics_proj/scRNA_seq')
+    saveDir = '/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/processedData'
+    file = '/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/datasets/AgingBrain/R23E10_gal4/GSE107451_R23E10_SMART-seq2_DGEM.tsv'
+    adata = sc.read_h5ad('/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/processedData/allconds_allgenes_postCluster_normBeforeCocat.h5ad')
+    markers = pd.read_csv('/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/processedData/Markers_allconds_allgenes_clusterRes_1.5.csv')
 
 #dfb = pd.read_csv(file,sep = '\t') 
 dfb = sc.read_csv(file,  delimiter='\t')
 dfb = dfb.transpose()
-adata = sc.read_h5ad('/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/processedData/allconds_allgenes_postCluster_normBeforeCocat.h5ad')
-markers = pd.read_csv('/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Omics_datasets/processedData/Markers_allconds_allgenes_clusterRes_1.5.csv')
+
 
 #%% look at dfb data
 
@@ -46,17 +59,23 @@ markers = pd.read_csv('/Users/elenawesteinde/Dropbox (HMS)/Wilson_Lab_Data/Omics
 # Compare against pseudobulk data of each cluster (1, n_features)
 # find which cluster the dfb cells have best match with 
 
-#%% Strategy 2
+#%% Strategy 2 map query dataset (dfb) onto ref dataset (adata - whole brain)
 
+# only keep shared features
 var_names = adata.var_names.intersection(dfb.var_names)
 adata = adata[:,var_names]
 dfb = dfb[:, var_names]
 
-#%%
+#%% recluster reference dataset 
 import clusterFunctions as cf
 adata, model, cluster_dic, markers_dict = cf.clusterData(adata, 'all', 1)
 
+sc.tl.ingest(dfb, adata, obs='leiden', embedding_method = 'umap')
 
+dfb.uns['leiden_colors'] = adata.uns['leiden_colors']  # fix colors
+sc.pl.umap(dfb, color=['leiden'], wspace=0.5)
+adata_concat = adata.concatenate(dfb, batch_categories = ['ref','new'])
+adata_concat.obs.leiden = adata_concat.obs.leiden.astype('category')
 
 
 
